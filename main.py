@@ -1,6 +1,8 @@
 # %%
 from matplotlib.pyplot import axis
+import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 # %%
 # Carga de datos
@@ -53,8 +55,23 @@ df4['mupnam'] = df4.pop('munnam')
 # %%
 df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8,
                df9, df10], axis=0, ignore_index=True)
-df.to_csv('datosBase.csv')
+#df.to_csv('datosBase.csv')
 
 # %%
 print(df.shape)
 print(df.columns.to_list())
+
+#Tabla de frecuencias variables cualitativas
+cualitative_vars = ['gretnm','escivm','depnam','mupnam','naciom','ocupam','asisrec','sitioocu','escolap','escolam','paisnacm','paisnacp','paisrem','paisrep','pueblopm','pueblopp','tipoins',
+                    'viapar','ciuopad','depnap','mupnap','naciop','ocupap','deprem','muprem','depreg','mupreg','mesreg','depocu','mupocu','areag','mesocu','sexo','tipar','deprep','muprep','gretnp','escivp','ciuomad']
+print(len(cualitative_vars))
+for var in cualitative_vars:
+    data = df[var].value_counts()
+    print(data)
+    plt.figure(figsize=(15,5))
+    sns.barplot(data.index, data.values, alpha=0.8)
+    plt.title(f'Frecuencia de datos cualitativos para {var}')
+    plt.ylabel('Cantidad')
+    plt.xlabel(var)
+    plt.xticks(rotation='vertical')
+    plt.show()
