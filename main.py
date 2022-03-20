@@ -51,46 +51,60 @@ df4['gretnm'] = df4.pop('grupetma')
 # REMPLAZO DE LA COLUMNA munnam POR mupnam DEBIDO A QUE ES LA MISMA DESCRIPCION
 df4['mupnam'] = df4.pop('munnam')
 
-# df1.columns.str.lower()
-#df = df1.append([df2.columns.str.lower(),df3.columns.str.lower(),df4.columns.str.lower(),df5.columns.str.lower(),df6.columns.str.lower(),df7.columns.str.lower(),df8.columns.str.lower(),df9.columns.str.lower(),df10.columns.str.lower()],ignore_index=True)
-
 # %%
 df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8,
                df9, df10], axis=0, ignore_index=True)
-#df.to_csv('datosBase.csv')
+# df.to_csv('datosBase.csv')
 
 # %%
-'''print(df.shape)
+print(df.shape)
 print(df.columns.to_list())
 
-#Tabla de frecuencias variables cualitativas
-cualitative_vars = ['gretnm','escivm','depnam','mupnam','naciom','ocupam','asisrec','sitioocu','escolap','escolam','paisnacm','paisnacp','paisrem','paisrep','pueblopm','pueblopp','tipoins',
-                    'viapar','ciuopad','depnap','mupnap','naciop','ocupap','deprem','muprem','depreg','mupreg','mesreg','depocu','mupocu','areag','mesocu','sexo','tipar','deprep','muprep','gretnp','escivp','ciuomad']
+# %%
+# Tabla de frecuencias variables cualitativas
+cualitative_vars = ['gretnm', 'escivm', 'depnam', 'mupnam', 'naciom', 'ocupam', 'asisrec', 'sitioocu', 'escolap', 'escolam', 'paisnacm', 'paisnacp', 'paisrem', 'paisrep', 'pueblopm', 'pueblopp', 'tipoins',
+                    'viapar', 'ciuopad', 'depnap', 'mupnap', 'naciop', 'ocupap', 'deprem', 'muprem', 'depreg', 'mupreg', 'mesreg', 'depocu', 'mupocu', 'areag', 'mesocu', 'sexo', 'tipar', 'deprep', 'muprep', 'gretnp', 'escivp', 'ciuomad']
 print(len(cualitative_vars))
 for var in cualitative_vars:
     data = df[var].value_counts()
     print(data)
-    plt.figure(figsize=(15,5))
+    plt.figure(figsize=(15, 5))
     sns.barplot(data.index, data.values, alpha=0.8)
     plt.title(f'Frecuencia de datos cualitativos para {var}')
     plt.ylabel('Cantidad')
     plt.xlabel(var)
     plt.xticks(rotation='vertical')
-    plt.show()'''
+    plt.show()
 
-quantitative_vars = ['añoreg','libras','onzas','diaocu','edadp','edadm','tohite','tohinm','tohivi','añoocu']
+# %%
+quantitative_vars = ['añoreg', 'libras', 'onzas', 'diaocu',
+                     'edadp', 'edadm', 'tohite', 'tohinm', 'tohivi', 'añoocu']
 
+# %%
+# CAMBIAR LA EL DATO 'Ignorado' POR 0.0
+df.replace('Ignorado', 0.0, inplace=True)
+
+# %%
+# CONVIERTO TODOS LOS DATOS EN NUEMROS
+# df[quantitative_vars] = df[quantitative_vars].apply(pd.to_numeric)
+for column in quantitative_vars:
+    df[column] = df[column].astype(float)
+
+# %%
 for var in quantitative_vars:
-    print("Evaluacion de normalidad de ", df[var])
+    print("\n===== Evaluacion de normalidad de la variable ",
+          var, ' ===== \n', df[var])
     data = df[var]
-    plt.hist(data,color='green')
+    plt.hist(data, color='green')
     plt.title(f'Histograma para {var}')
     plt.xlabel(var)
     plt.ylabel('Cantidad')
     plt.show()
-    qqplot(data , line='s')
+    qqplot(data, line='s')
     plt.title(f'QQplot para {var}')
     plt.show()
 
-    print('Curtosis: ',stats.kurtosis(data))
-    print('Asimetria: ',stats.skew(data))
+    print('Curtosis: ', stats.kurtosis(data))
+    print('Asimetria: ', stats.skew(data))
+
+# %%
