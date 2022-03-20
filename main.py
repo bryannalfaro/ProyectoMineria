@@ -3,6 +3,8 @@ from matplotlib.pyplot import axis
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from statsmodels.graphics.gofplots import qqplot
+from scipy import stats
 
 # %%
 # Carga de datos
@@ -58,7 +60,7 @@ df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8,
 #df.to_csv('datosBase.csv')
 
 # %%
-print(df.shape)
+'''print(df.shape)
 print(df.columns.to_list())
 
 #Tabla de frecuencias variables cualitativas
@@ -74,4 +76,21 @@ for var in cualitative_vars:
     plt.ylabel('Cantidad')
     plt.xlabel(var)
     plt.xticks(rotation='vertical')
+    plt.show()'''
+
+quantitative_vars = ['añoreg','libras','onzas','diaocu','edadp','edadm','tohite','tohinm','tohivi','añoocu']
+
+for var in quantitative_vars:
+    print("Evaluacion de normalidad de ", df[var])
+    data = df[var]
+    plt.hist(data,color='green')
+    plt.title(f'Histograma para {var}')
+    plt.xlabel(var)
+    plt.ylabel('Cantidad')
     plt.show()
+    qqplot(data , line='s')
+    plt.title(f'QQplot para {var}')
+    plt.show()
+
+    print('Curtosis: ',stats.kurtosis(data))
+    print('Asimetria: ',stats.skew(data))
