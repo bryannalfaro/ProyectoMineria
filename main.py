@@ -131,11 +131,13 @@ sns.heatmap(corr_df, annot=True, cmap='coolwarm', mask=np.triu(
 plt.show()
 
 # %%
-pd.crosstab(index=df['gretnm'], columns=df['tohite'], margins=True)
+# Cruce de datos
 pd.crosstab(index=df['gretnp'], columns=df['tohite'], margins=True)
+# %%
+pd.crosstab(index=df['gretnm'], columns=df['tohite'], margins=True)
+# %%
 pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True)
-pd.crosstab(index=pd.crosstab(
-    index=df['deprep'], columns=df['deprem'], margins=True), columns=df['tohite'], margins=True)
+# %%
 pd.crosstab(index=df['gretnp'], columns=df['gretnm'], margins=True)
 
 # %%
