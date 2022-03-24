@@ -108,3 +108,8 @@ for var in quantitative_vars:
     print('Asimetria: ', stats.skew(data))
 
 # %%
+pd.crosstab(index=df['gretnm'], columns=df['tohite'], margins=True)
+pd.crosstab(index=df['gretnp'], columns=df['tohite'], margins=True)
+pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True)
+pd.crosstab(index=pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True), columns=df['tohite'], margins=True)
+pd.crosstab(index=df['gretnp'], columns=df['gretnm'], margins=True)
