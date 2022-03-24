@@ -114,7 +114,21 @@ for var in quantitative_vars:
 # %%
 # Estadistica descriptiva
 for var in quantitative_vars:
-    df[var].describe().transpose()
+    try:
+        print("\n===== Estadistica descriptiva de la variable ",
+              var, ' ===== \n')
+        print(df[var].describe())
+    except:
+        print('fallo')
+
+# %%
+# Correlaciones
+corr_df = df.corr(method='pearson')
+
+plt.figure(figsize=(15, 15))
+sns.heatmap(corr_df, annot=True, cmap='coolwarm', mask=np.triu(
+    np.ones_like(corr_df, dtype=bool)), vmin=-1, vmax=1)
+plt.show()
 
 # %%
 pd.crosstab(index=df['gretnm'], columns=df['tohite'], margins=True)
