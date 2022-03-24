@@ -5,6 +5,10 @@ import pandas as pd
 import seaborn as sns
 from statsmodels.graphics.gofplots import qqplot
 from scipy import stats
+import numpy as np
+import sklearn.cluster as cluster
+import sklearn.preprocessing
+from sklearn.mixture import GaussianMixture
 
 # %%
 # Carga de datos
@@ -113,3 +117,51 @@ pd.crosstab(index=df['gretnp'], columns=df['tohite'], margins=True)
 pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True)
 pd.crosstab(index=pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True), columns=df['tohite'], margins=True)
 pd.crosstab(index=df['gretnp'], columns=df['gretnm'], margins=True)
+# # Haga un agrupamiento (clustering) e interprete los resultados
+
+cuantitatives = df[['libras', 'onzas']]
+cuantitatives.head()
+data = np.array(cuantitatives.dropna())
+data
+scale = sklearn.preprocessing.scale(data)
+scale
+
+numeroClusters = range(1, 11)
+wcss = []
+for i in numeroClusters:
+    kmeans = cluster.KMeans(n_clusters=i)
+    kmeans.fit(scale)
+    wcss.append(kmeans.inertia_)
+
+plt.plot(numeroClusters, wcss)
+plt.xlabel("Número de clusters")
+plt.ylabel("Score")
+plt.title("Gráfico de Codo")
+plt.show()
+
+# %%
+kmeans = cluster.KMeans(n_clusters=3, max_iter=300)
+kmeans.fit(scale)
+kmeans_result = kmeans.predict(scale)
+kmeans_clusters = np.unique(kmeans_result)
+for kmeans_cluster in kmeans_clusters:
+    index = np.where(kmeans_result == kmeans_cluster)
+    plt.scatter(scale[index, 0], scale[index, 1])
+# plt.axis([0, 10, 0, 4])
+plt.show()
+
+# %%
+gaussian_model = GaussianMixture(n_components=3)
+gaussian_model.fit(scale)
+gaussian_result = gaussian_model.predict(scale)
+gaussian_clusters = np.unique(gaussian_result)
+
+# graficar los grupos de Mezcla Gaussiana
+for gaussian_cluster in gaussian_clusters:
+    index = np.where(gaussian_result == gaussian_cluster)
+    plt.scatter(scale[index, 0], scale[index, 1])
+
+# mostrar el gráfico de Mezcla Gaussiana
+plt.show()
+
+# %%
