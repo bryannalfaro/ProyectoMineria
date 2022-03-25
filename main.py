@@ -9,6 +9,9 @@ import numpy as np
 import sklearn.cluster as cluster
 import sklearn.preprocessing
 from sklearn.mixture import GaussianMixture
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_samples
+import matplotlib.cm as cm
 
 # %%
 # Carga de datos
@@ -187,5 +190,39 @@ for gaussian_cluster in gaussian_clusters:
 
 # mostrar el gráfico de Mezcla Gaussiana
 plt.show()
+
+# %%
+df10.replace('Ignorado', 0.0, inplace=True)
+cuantitatives2 = df10[['libras', 'onzas', 'edadp', 'edadm', 'añoreg']]
+data = np.array(cuantitatives2.dropna())
+data
+scale = sklearn.preprocessing.scale(data)
+fig, eje = plt.subplots(figsize=(1,1))
+fig.set_size_inches(18, 7)
+
+eje.set_xlim([-0.1, 1])
+eje.set_ylim([0, len(scale) + (4) * 10])
+print(len(scale))
+clabels = kmeans.fit_predict(scale)
+promedio = silhouette_score(scale, clabels)
+silueta_prueba = silhouette_samples(cuantitatives2, clabels)
+min =10
+
+for i in range(0, 3):
+    valores = silueta_prueba[clabels == i]
+    valores.sort()
+    size = valores.shape[0]
+    max = min + size
+    color = cm.nipy_spectral(float(i) / 3)
+    eje.fill_betweenx(np.arange(min, max), 0, valores, facecolor=color, edgecolor=color, alpha=0.7,)
+    eje.text(-0.05, min + 0.5 * size, str(i))
+    min = max + 10
+
+eje.set_title('Silueta')
+eje.set_xlabel("Valores")
+eje.set_ylabel("Nombre")
+eje.axvline(x=promedio, color="red", linestyle="--")
+eje.set_yticks([]) 
+eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
