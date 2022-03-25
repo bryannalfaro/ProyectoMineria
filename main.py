@@ -71,17 +71,17 @@ print(df.columns.to_list())
 # Tabla de frecuencias variables cualitativas
 cualitative_vars = ['gretnm', 'escivm', 'depnam', 'mupnam', 'naciom', 'ocupam', 'asisrec', 'sitioocu', 'escolap', 'escolam', 'paisnacm', 'paisnacp', 'paisrem', 'paisrep', 'pueblopm', 'pueblopp', 'tipoins',
                     'viapar', 'ciuopad', 'depnap', 'mupnap', 'naciop', 'ocupap', 'deprem', 'muprem', 'depreg', 'mupreg', 'mesreg', 'depocu', 'mupocu', 'areag', 'mesocu', 'sexo', 'tipar', 'deprep', 'muprep', 'gretnp', 'escivp', 'ciuomad']
-print(len(cualitative_vars))
-for var in cualitative_vars:
-    data = df[var].value_counts()
-    print(data)
-    plt.figure(figsize=(15, 5))
-    sns.barplot(data.index, data.values, alpha=0.8)
-    plt.title(f'Frecuencia de datos cualitativos para {var}')
-    plt.ylabel('Cantidad')
-    plt.xlabel(var)
-    plt.xticks(rotation='vertical')
-    plt.show()
+# print(len(cualitative_vars))
+# for var in cualitative_vars:
+#     data = df[var].value_counts()
+#     print(data)
+#     plt.figure(figsize=(15, 5))
+#     sns.barplot(data.index, data.values, alpha=0.8)
+#     plt.title(f'Frecuencia de datos cualitativos para {var}')
+#     plt.ylabel('Cantidad')
+#     plt.xlabel(var)
+#     plt.xticks(rotation='vertical')
+#     plt.show()
 
 # %%
 quantitative_vars = ['añoreg', 'libras', 'onzas', 'diaocu',
@@ -106,6 +106,15 @@ for var in quantitative_vars:
     plt.title(f'Histograma para {var}')
     plt.xlabel(var)
     plt.ylabel('Cantidad')
+    plt.show()
+    plt.title(f'BoxPlot para {var}')
+    plt.boxplot(data)
+    plt.show()
+    fig, ax = plt.subplots()
+    ax.scatter(data.values, data.index)
+    plt.title(f'Gráfica de Dispersión para {var}')
+    plt.ylabel('Cantidad')
+    plt.xlabel(var)
     plt.show()
     qqplot(data, line='s')
     plt.title(f'QQplot para {var}')
