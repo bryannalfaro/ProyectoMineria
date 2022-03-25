@@ -178,6 +178,10 @@ plt.show()
 # %%
 kmeans = cluster.KMeans(n_clusters=3, max_iter=300)
 kmeans.fit(scale)
+df['cluster kmeans'] = kmeans.labels_
+print(df[df['cluster kmeans'] == 0].describe())
+print(df[df['cluster kmeans'] == 1].describe())
+print(df[df['cluster kmeans'] == 2].describe())
 kmeans_result = kmeans.predict(scale)
 kmeans_clusters = np.unique(kmeans_result)
 for kmeans_cluster in kmeans_clusters:
@@ -189,6 +193,7 @@ plt.show()
 # %%
 gaussian_model = GaussianMixture(n_components=3)
 gaussian_model.fit(scale)
+df['cluster gaussian'] = gaussian_model.predict(scale)
 gaussian_result = gaussian_model.predict(scale)
 gaussian_clusters = np.unique(gaussian_result)
 
@@ -231,7 +236,7 @@ eje.set_title('Silueta')
 eje.set_xlabel("Valores")
 eje.set_ylabel("Nombre")
 eje.axvline(x=promedio, color="red", linestyle="--")
-eje.set_yticks([]) 
+eje.set_yticks([])
 eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
