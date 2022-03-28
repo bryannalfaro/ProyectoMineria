@@ -92,6 +92,19 @@ quantitative_vars = ['añoreg', 'libras', 'onzas', 'diaocu',
 df.replace('Ignorado', 0.0, inplace=True)
 
 # %%
+# Filtar data
+df = df[df['tohite'] < 7]
+df = df[df['añoreg'] > 1750]
+df = df[(df['libras'] < 9) & (df['libras'] > 4)]
+df = df[df['onzas'] < 20]
+df = df[(df['edadp'] < 51) & (df['edadp'] > 5)]
+df = df[(df['edadm'] < 47) & (df['edadm'] > 5)]
+df = df[df['tohinm'] < 4]
+df = df[df['tohivi'] < 7]
+df.loc[df['añoreg'] == '9', 'añoreg'] = '2009'
+df.loc[df['añoreg'] == '10', 'añoreg'] = '2010'
+
+# %%
 # CONVIERTO TODOS LOS DATOS EN NUEMROS
 # df[quantitative_vars] = df[quantitative_vars].apply(pd.to_numeric)
 for column in quantitative_vars:
@@ -101,24 +114,7 @@ for column in quantitative_vars:
 for var in quantitative_vars:
     print("\n===== Evaluacion de normalidad de la variable ",
           var, ' ===== \n', df[var])
-    if var == 'tohite':
-        data = df[var][df[var] < 7].dropna()
-    elif var == 'añoreg':
-        data = df[var][df[var] > 1750].dropna()
-    elif var == 'libras':
-        data = df[var][(df[var] < 9) & (df[var] > 4)].dropna()
-    elif var == 'onzas':
-        data = df[var][df[var] < 20].dropna()
-    elif var == 'edadp':
-        data = df[var][(df[var] < 51) & (df[var] > 5)].dropna()
-    elif var == 'edadm':
-        data = df[var][(df[var] < 47) & (df[var] > 5)].dropna()
-    elif var == 'tohinm':
-        data = df[var][df[var] < 4].dropna()
-    elif var == 'tohivi':
-        data = df[var][df[var] < 7].dropna()
-    else:
-        data = df[var]
+    data = df[var]
     plt.hist(data, color='green')
     plt.title(f'Histograma para {var}')
     plt.xlabel(var)
