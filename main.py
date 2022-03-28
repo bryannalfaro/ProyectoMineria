@@ -101,7 +101,24 @@ for column in quantitative_vars:
 for var in quantitative_vars:
     print("\n===== Evaluacion de normalidad de la variable ",
           var, ' ===== \n', df[var])
-    data = df[var]
+    if var == 'tohite':
+        data = df[var][df[var] < 7].dropna()
+    elif var == 'añoreg':
+        data = df[var][df[var] > 1750].dropna()
+    elif var == 'libras':
+        data = df[var][(df[var] < 9) & (df[var] > 4)].dropna()
+    elif var == 'onzas':
+        data = df[var][df[var] < 20].dropna()
+    elif var == 'edadp':
+        data = df[var][(df[var] < 51) & (df[var] > 5)].dropna()
+    elif var == 'edadm':
+        data = df[var][(df[var] < 47) & (df[var] > 5)].dropna()
+    elif var == 'tohinm':
+        data = df[var][df[var] < 4].dropna()
+    elif var == 'tohivi':
+        data = df[var][df[var] < 7].dropna()
+    else:
+        data = df[var]
     plt.hist(data, color='green')
     plt.title(f'Histograma para {var}')
     plt.xlabel(var)
