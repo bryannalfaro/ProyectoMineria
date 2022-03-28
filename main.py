@@ -101,8 +101,8 @@ df = df[(df['edadp'] < 51) & (df['edadp'] > 5)]
 df = df[(df['edadm'] < 47) & (df['edadm'] > 5)]
 df = df[df['tohinm'] < 4]
 df = df[df['tohivi'] < 7]
-df.loc[df['añoreg'] == '9', 'añoreg'] = '2009'
-df.loc[df['añoreg'] == '10', 'añoreg'] = '2010'
+df.loc[df['añoreg'] == '9', 'añoreg'] = 2009.0
+df.loc[df['añoreg'] == '10', 'añoreg'] = 2010.0
 
 # %%
 # CONVIERTO TODOS LOS DATOS EN NUEMROS
