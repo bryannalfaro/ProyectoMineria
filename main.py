@@ -1,8 +1,13 @@
 # %%
+import random
 from matplotlib.pyplot import axis
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from sklearn import tree
+from sklearn import metrics
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
 from statsmodels.graphics.gofplots import qqplot
 from scipy import stats
 import numpy as np
@@ -111,7 +116,7 @@ for column in quantitative_vars:
     df[column] = df[column].astype(float)
 
 # %%
-for var in quantitative_vars:
+'''for var in quantitative_vars:
     print("\n===== Evaluacion de normalidad de la variable ",
           var, ' ===== \n', df[var])
     data = df[var]
@@ -163,19 +168,21 @@ pd.crosstab(index=df['gretnm'], columns=df['tohite'], margins=True)
 # %%
 pd.crosstab(index=df['deprep'], columns=df['deprem'], margins=True)
 # %%
-pd.crosstab(index=df['gretnp'], columns=df['gretnm'], margins=True)
+pd.crosstab(index=df['gretnp'], columns=df['gretnm'], margins=True)'''
 
 # %%
 # # Haga un agrupamiento (clustering) e interprete los resultados
 
-cuantitatives = df[['libras', 'onzas', 'edadp', 'edadm', 'añoreg']]
+'''cuantitatives = df[['libras', 'onzas']]
 cuantitatives.head()
+
+cuantitatives= (cuantitatives-cuantitatives.min())/(cuantitatives.max()-cuantitatives.min())
 data = np.array(cuantitatives.dropna())
 data
 scale = sklearn.preprocessing.scale(data)
-scale
+scale'''
 
-numeroClusters = range(1, 11)
+'''numeroClusters = range(1, 11)
 wcss = []
 for i in numeroClusters:
     kmeans = cluster.KMeans(n_clusters=i)
@@ -186,9 +193,37 @@ plt.plot(numeroClusters, wcss)
 plt.xlabel("Número de clusters")
 plt.ylabel("Score")
 plt.title("Gráfico de Codo")
+plt.show()'''
+
+
+'''clusters=  cluster.KMeans(n_clusters=3, max_iter=300) #Creacion del modelo
+clusters.fit(cuantitatives) #Aplicacion del modelo de cluster
+
+cuantitatives['cluster'] = clusters.labels_ #Asignacion de los clusters
+df['cluster kmeans'] = clusters.labels_
+print(cuantitatives.head())
+
+pca = PCA(2)
+pca_movies = pca.fit_transform(cuantitatives)
+pca_movies_df = pd.DataFrame(data = pca_movies, columns = ['PC1', 'PC2'])
+pca_clust_movies = pd.concat([pca_movies_df, cuantitatives[['cluster']]], axis = 1)
+
+fig = plt.figure(figsize=(8,8))
+ax = fig.add_subplot(1,1,1)
+ax.set_xlabel('PC1', fontsize = 15)
+ax.set_ylabel('PC2', fontsize = 15)
+ax.set_title('Clusters de peliculas', fontsize = 20)
+
+color_theme = np.array(['red', 'green', 'blue', 'yellow','black'])
+ax.scatter(x = pca_clust_movies.PC1, y = pca_clust_movies.PC2, s = 50, c = color_theme[pca_clust_movies.cluster.fillna(0).astype(int)])
+
 plt.show()
 
-# %%
+print(df[df['cluster kmeans'] == 0].describe())
+print(df[df['cluster kmeans'] == 1].describe())
+print(df[df['cluster kmeans'] == 2].describe())'''
+
+'''# %%
 kmeans = cluster.KMeans(n_clusters=3, max_iter=300)
 kmeans.fit(scale)
 df['cluster kmeans'] = kmeans.labels_
@@ -201,10 +236,10 @@ for kmeans_cluster in kmeans_clusters:
     index = np.where(kmeans_result == kmeans_cluster)
     plt.scatter(scale[index, 0], scale[index, 1])
 # plt.axis([0, 10, 0, 4])
-plt.show()
+plt.show()'''
 
 # %%
-gaussian_model = GaussianMixture(n_components=3)
+'''gaussian_model = GaussianMixture(n_components=3)
 gaussian_model.fit(scale)
 df['cluster gaussian'] = gaussian_model.predict(scale)
 gaussian_result = gaussian_model.predict(scale)
@@ -252,4 +287,87 @@ eje.axvline(x=promedio, color="red", linestyle="--")
 eje.set_yticks([])
 eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
+# %%'''
+
+random.seed(255)
+df_tree = df[['depocu', 'mupocu', 'areag','diaocu',
+'mesocu','deprep', 'muprep', 'gretnp', 'deprem',
+'muprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
+'tohivi', 'pueblopm', 'pueblopp']]
+
+df_tree = df_tree.iloc[0:10000]
+#print("raul no sabe",df_tree.shape)
+# for i in range(len(df_tree)):
+#     try:
+#         if int(df_tree['mupocu'][i]):
+#             df_tree['mupocu'][i] = np.nan
+#     except:
+#         pass
+#Mupocu, gretnm, gretnp, areag, deprep, muprep, deprem, muprem, asisrec,pueblopm, pueblopp
+nonnumeric = ['depocu', 'areag','diaocu',
+'mesocu','deprep', 'muprep','deprem',
+'muprem', 'asisrec', 'tohite', 'tohinm',
+'tohivi', 'pueblopm', 'pueblopp']
+
+# for variable in nonnumeric:
+#     print(df[variable].value_counts())
+
+removeNum = ['mupocu', 'gretnm', 'gretnp', 'areag', 'deprep', 'muprep', 'deprem', 'muprem', 'asisrec', 'pueblopm', 'pueblopp']
+
+for variable in removeNum:
+    for pos in range(len(df_tree)):
+        try:
+            if int(df_tree[variable][pos]):
+                df_tree[variable][pos] = np.nan
+
+        except:
+            pass
+    #df_tree = df_tree.dropna(subset=[variable])
+
+print("fasd", df_tree.head(10))
+for variable in nonnumeric:
+    print(df[variable].value_counts())
+print(df_tree.shape)
+
+'''df_tree = df_tree.loc[0:300]
+print(df_tree.shape()) # 17, 300
+
+df_dummies_tree = pd.get_dummies(df_tree[['depocu','mupocu','areag']])
+
+df_dummies_tree = df_dummies_tree.loc[0:200]
+
+y = df_dummies_tree.pop('tohite')
+x = df_dummies_tree
+
+print(x.shape, y.shape)
+print(x.head(5))
+
+x_train_reg, x_test_reg, y_train_reg, y_test_reg = train_test_split(x, y, test_size=0.3, train_size=0.7, random_state=0)
+
+Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=20)
+
+
+Dt_model_reg.fit(x_train_reg, y_train_reg)
+
+y_pred_reg = Dt_model_reg.predict(X = x_test_reg)
+y_pred_train_reg = Dt_model_reg.predict(X = x_train_reg)
+
+rmse = metrics.mean_squared_error(
+    y_true  = y_test_reg,
+    y_pred  = y_pred_reg,
+    squared = False
+)
+
+rmse_train = metrics.mean_squared_error(
+    y_true  = y_train_reg,
+    y_pred  = y_pred_train_reg,
+    squared = False
+)
+print("-----------------------------------")
+print(f"El error (rmse) de test es: {rmse}")
+print("-----------------------------------")
+
+print("-----------------------------------")
+print(f"El error (rmse) de train es: {rmse_train}")
+print("-----------------------------------")'''
 # %%
