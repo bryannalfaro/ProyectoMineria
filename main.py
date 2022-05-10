@@ -289,51 +289,42 @@ eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%'''
 
+# %%
 random.seed(255)
-df_tree = df[['depocu', 'mupocu','diaocu',
-'mesocu','deprep', 'muprep', 'gretnp', 'deprem',
-'muprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
-'tohivi']].copy()
+df_tree = df[['depocu', 'mupocu', 'diaocu',
+              'mesocu', 'deprep', 'muprep', 'gretnp', 'deprem',
+              'muprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
+              'tohivi']].copy()
 
+# %%
 df_tree2 = df_tree.iloc[0:500].copy()
 
-print("raul no sabe",df_tree2.shape)
+print("raul no sabe", df_tree2.shape)
 # for i in range(len(df_tree)):
 #     try:
 #         if int(df_tree['mupocu'][i]):
 #             df_tree['mupocu'][i] = np.nan
 #     except:
 #         pass
+# %%
 #Mupocu, gretnm, gretnp, areag, deprep, muprep, deprem, muprem, asisrec,pueblopm, pueblopp
-nonnumeric = ['mupocu','gretnm','gretnp','depocu','diaocu',
-'mesocu','deprep', 'muprep','deprem',
-'muprem', 'asisrec']
+nonnumeric = ['mupocu', 'gretnm', 'gretnp', 'depocu', 'diaocu',
+              'mesocu', 'deprep', 'muprep', 'deprem',
+              'muprem', 'asisrec']
 
-
-removeNum = ['mupocu', 'gretnm', 'gretnp', 'deprep', 'muprep', 'deprem', 'muprem', 'asisrec'] #quitando pueblopp, pueblopm
+# %%
+removeNum = ['mupocu', 'gretnm', 'gretnp', 'deprep', 'muprep',
+             'deprem', 'muprem', 'asisrec']  # quitando pueblopp, pueblopm
 df_tree2 = pd.DataFrame(df_tree2)
-for variablef in removeNum:
-    for pos in range(len(df_tree2)):
-        try:
-            #if variable == 'gretnm':
-                #print("yey", type(df_tree2.iloc[pos][variable]), df_tree2.iloc[pos][variable], df_tree2.iloc[pos][variable]==0.0)
-                #float(df_tree2[variable][pos])
-                if float(df_tree2.iloc[pos][variablef]) == 0.0:
-                        print("here")
-
-                        df_tree2.at[pos, variablef] = None
-                        print('changed', df_tree2.iloc[pos][variablef])
-
-        except:
-            pass
-    #df_tree2 = df_tree2.dropna(subset=[str(variablef)])
-
-
-#Verificando que se eliminen numeros y solo queden strings
+# %%
+df_tree2 = df_tree2.applymap(lambda x: np.nan if x == 0.0 else x)
+# %%
+# Verificando que se eliminen numeros y solo queden strings
 for variableg in removeNum:
     print(df_tree2[variableg].value_counts())
+    print("\n")
 
-
+# %%
 '''df_tree = df_tree.loc[0:300]
 print(df_tree.shape()) # 17, 300
 
@@ -375,4 +366,3 @@ print("-----------------------------------")
 print("-----------------------------------")
 print(f"El error (rmse) de train es: {rmse_train}")
 print("-----------------------------------")'''
-## %%
