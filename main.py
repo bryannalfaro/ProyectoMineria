@@ -291,30 +291,20 @@ eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
 random.seed(255)
-df_tree = df[['depocu', 'mupocu', 'diaocu',
-              'mesocu', 'deprep', 'muprep', 'gretnp', 'deprem',
-              'muprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
+df_tree = df[['depocu', 'diaocu',
+              'mesocu', 'deprep', 'gretnp', 'deprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
               'tohivi']].copy()
 
 # %%
-df_tree2 = df_tree.iloc[0:500].copy()
+df_tree2 = df_tree.iloc[0:1000000].copy()
 
-print("raul no sabe", df_tree2.shape)
-# for i in range(len(df_tree)):
-#     try:
-#         if int(df_tree['mupocu'][i]):
-#             df_tree['mupocu'][i] = np.nan
-#     except:
-#         pass
 # %%
 #Mupocu, gretnm, gretnp, areag, deprep, muprep, deprem, muprem, asisrec,pueblopm, pueblopp
-nonnumeric = ['mupocu', 'gretnm', 'gretnp', 'depocu', 'diaocu',
-              'mesocu', 'deprep', 'muprep', 'deprem',
-              'muprem', 'asisrec']
+nonnumeric = ['gretnm', 'gretnp', 'depocu','deprep', 'deprem', 'asisrec','mesocu']
 
 # %%
-removeNum = ['mupocu', 'gretnm', 'gretnp', 'deprep', 'muprep',
-             'deprem', 'muprem', 'asisrec']  # quitando pueblopp, pueblopm
+removeNum = ['gretnm', 'gretnp', 'deprep',
+             'deprem',  'asisrec']  # quitando pueblopp, pueblopm
 df_tree2 = pd.DataFrame(df_tree2)
 # %%
 df_tree2 = df_tree2.applymap(lambda x: np.nan if x == 0.0 else x)
@@ -324,23 +314,32 @@ for variableg in removeNum:
     print(df_tree2[variableg].value_counts())
     print("\n")
 
-# %%
-'''df_tree = df_tree.loc[0:300]
-print(df_tree.shape()) # 17, 300
+#%%
+df_tree2 = pd.DataFrame(df_tree2)
+print('INITIAL \n',df_tree2.head(20))
 
-df_dummies_tree = pd.get_dummies(df_tree[['depocu','mupocu','areag']])
+#Eliminando valores Nan
+for i in nonnumeric:
+    df_tree2.dropna(subset=[i], inplace=True)
 
-df_dummies_tree = df_dummies_tree.loc[0:200]
+for i in nonnumeric:
+        df_tree2[i] = df_tree2[i].astype("category").cat.codes
 
-y = df_dummies_tree.pop('tohite')
-x = df_dummies_tree
 
+print('FINAL \n',df_tree2.head(20))
+
+#%%
+print(df_tree2.head(20))
+df_tree2.fillna(0, inplace=True) #Llenando valores Nan de cantidades
+y = df_tree2.pop('tohite')
+x = df_tree2
+print('SHAPING\n')
 print(x.shape, y.shape)
 print(x.head(5))
-
+#%%
 x_train_reg, x_test_reg, y_train_reg, y_test_reg = train_test_split(x, y, test_size=0.3, train_size=0.7, random_state=0)
 
-Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=20)
+Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=90)
 
 
 Dt_model_reg.fit(x_train_reg, y_train_reg)
@@ -365,4 +364,8 @@ print("-----------------------------------")
 
 print("-----------------------------------")
 print(f"El error (rmse) de train es: {rmse_train}")
-print("-----------------------------------")'''
+print("-----------------------------------")
+plt.figure(figsize=(23, 10))
+tree.plot_tree(Dt_model_reg, feature_names=df_tree2.columns, fontsize=7, filled=True, rounded=True)
+plt.show()
+# %%

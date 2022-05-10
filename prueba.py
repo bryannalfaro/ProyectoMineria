@@ -6,26 +6,18 @@ fruit_list = [('Orange', '0.0', 'Yes'),
               ('kiwi', 0.0, 'No'),
               ('Apple', 'Raul', 'Yes'),
               ('Pineapple', 64, 'No'),
-              ('Kiwis', 84, 'Yes')]
+              ('Pineapple', 84, 'Yes')]
 
 # Create a DataFrame object
 df = pd.DataFrame(fruit_list, columns=['Name', 'Price', 'Stock'])
 
 df2 = df.copy()
-
-var = ['Price', 'Name']
+print(df2['Name'].astype('category').cat.codes)
+var = ['Name']
 for var1 in var:
-    for i in range(len(df2)):
-        try:
-            if float(df2.iloc[i][var1]) == 0.0:
-                df2.at[i, var1] = None
-                print("changed", df2.iloc[i][var1])
-
-        except:
-            pass
-
-    df2 = df2.dropna(subset=[str(var1)])
+        df2[var1]= df2[var1].astype("category").cat.codes
 
 
-print("fff", df2)
+print('porto', df2.head(7))
+
 # %%
