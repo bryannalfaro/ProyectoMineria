@@ -291,20 +291,18 @@ eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
 random.seed(255)
-df_tree = df[['depocu', 'diaocu',
-              'mesocu', 'deprep', 'gretnp', 'deprem', 'gretnm', 'asisrec', 'tohite', 'tohinm',
-              'tohivi']].copy()
+df_tree = df[['deprep', 'gretnp', 'deprem', 'gretnm', 'tohite']].copy()
 
 # %%
 df_tree2 = df_tree.iloc[0:1000000].copy()
 
 # %%
 #Mupocu, gretnm, gretnp, areag, deprep, muprep, deprem, muprem, asisrec,pueblopm, pueblopp
-nonnumeric = ['gretnm', 'gretnp', 'depocu','deprep', 'deprem', 'asisrec','mesocu']
+nonnumeric = ['gretnm', 'gretnp', 'deprep', 'deprem']
 
 # %%
 removeNum = ['gretnm', 'gretnp', 'deprep',
-             'deprem',  'asisrec']  # quitando pueblopp, pueblopm
+             'deprem']  # quitando pueblopp, pueblopm
 df_tree2 = pd.DataFrame(df_tree2)
 # %%
 df_tree2 = df_tree2.applymap(lambda x: np.nan if x == 0.0 else x)
@@ -339,7 +337,7 @@ print(x.head(5))
 #%%
 x_train_reg, x_test_reg, y_train_reg, y_test_reg = train_test_split(x, y, test_size=0.3, train_size=0.7, random_state=0)
 
-Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=90)
+Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=25)
 
 
 Dt_model_reg.fit(x_train_reg, y_train_reg)
