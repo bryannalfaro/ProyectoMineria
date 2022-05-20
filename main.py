@@ -17,6 +17,9 @@ from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import silhouette_samples
 import matplotlib.cm as cm
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import confusion_matrix
+
 
 # %%
 # Carga de datos
@@ -115,8 +118,9 @@ df.loc[df['añoreg'] == '10', 'añoreg'] = 2010.0
 for column in quantitative_vars:
     df[column] = df[column].astype(float)
 
+'''
 # %%
-'''for var in quantitative_vars:
+for var in quantitative_vars:
     print("\n===== Evaluacion de normalidad de la variable ",
           var, ' ===== \n', df[var])
     data = df[var]
@@ -312,49 +316,61 @@ for variableg in removeNum:
     print(df_tree2[variableg].value_counts())
     print("\n")
 
-#%%
+# %%
 df_tree2 = pd.DataFrame(df_tree2)
-print('INITIAL \n',df_tree2.head(20))
+print('INITIAL \n', df_tree2.head(20))
 
-#Eliminando valores Nan
+# Eliminando valores Nan
 for i in nonnumeric:
     df_tree2.dropna(subset=[i], inplace=True)
 
 for i in nonnumeric:
-        df_tree2[i] = df_tree2[i].astype("category").cat.codes
+    df_tree2[i] = df_tree2[i].astype("category").cat.codes
 
 
-print('FINAL \n',df_tree2.head(20))
+print('FINAL \n', df_tree2.head(20))
 
-#%%
+# %%
 print(df_tree2.head(20))
-df_tree2.fillna(0, inplace=True) #Llenando valores Nan de cantidades
+df_tree2.fillna(0, inplace=True)  # Llenando valores Nan de cantidades
 y = df_tree2.pop('tohite')
 x = df_tree2
 print('SHAPING\n')
 print(x.shape, y.shape)
 print(x.head(5))
-#%%
-x_train_reg, x_test_reg, y_train_reg, y_test_reg = train_test_split(x, y, test_size=0.3, train_size=0.7, random_state=0)
+# %%
+x_train_reg, x_test_reg, y_train_reg, y_test_reg = train_test_split(
+    x, y, test_size=0.3, train_size=0.7, random_state=0)
 
 Dt_model_reg = tree.DecisionTreeRegressor(random_state=0, max_leaf_nodes=25)
 
 
 Dt_model_reg.fit(x_train_reg, y_train_reg)
 
-y_pred_reg = Dt_model_reg.predict(X = x_test_reg)
-y_pred_train_reg = Dt_model_reg.predict(X = x_train_reg)
+y_pred_reg = Dt_model_reg.predict(X=x_test_reg)
+y_pred_train_reg = Dt_model_reg.predict(X=x_train_reg)
 
 rmse = metrics.mean_squared_error(
-    y_true  = y_test_reg,
-    y_pred  = y_pred_reg,
-    squared = False
+    y_true=y_test_reg,
+    y_pred=y_pred_reg,
+    squared=False
 )
 
 rmse_train = metrics.mean_squared_error(
-    y_true  = y_train_reg,
-    y_pred  = y_pred_train_reg,
-    squared = False
+    y_true=y_train_reg,
+    y_pred=y_pred_train_reg,
+    squared=False
+)
+mse = metrics.mean_squared_error(
+    y_true=y_test_reg,
+    y_pred=y_pred_reg,
+    squared=True
+)
+
+mse_train = metrics.mean_squared_error(
+    y_true=y_train_reg,
+    y_pred=y_pred_train_reg,
+    squared=True
 )
 print("-----------------------------------")
 print(f"El error (rmse) de test es: {rmse}")
@@ -363,7 +379,31 @@ print("-----------------------------------")
 print("-----------------------------------")
 print(f"El error (rmse) de train es: {rmse_train}")
 print("-----------------------------------")
+print("-----------------------------------")
+print(f"El error (mse) de test es: {mse}")
+print("-----------------------------------")
+
+print("-----------------------------------")
+print(f"El error (mse) de train es: {mse_train}")
+print("-----------------------------------")
 plt.figure(figsize=(23, 10))
-tree.plot_tree(Dt_model_reg, feature_names=df_tree2.columns, fontsize=7, filled=True, rounded=True)
+tree.plot_tree(Dt_model_reg, feature_names=df_tree2.columns,
+               fontsize=7, filled=True, rounded=True)
 plt.show()
+# %%
+# cm = confusion_matrix(y_test_reg, y_pred_reg)
+# print('Confusion matrix \n', cm)
+# graf = sns.heatmap(cm, annot=True, cmap='Blues')
+# graf.set_title('Matriz de confusion\n\n')
+# graf.set_xlabel('\nPredicted Values')
+# graf.set_ylabel('Actual Values ')
+# plt.show()
+
+# # %%
+# accuracy = accuracy_score(y_test_reg, y_pred_reg)
+# precision = precision_score(y_test_reg, y_pred_reg, average='micro')
+# recall = recall_score(y_test_reg, y_pred_reg, average='micro')
+# f1 = f1_score(y_test_reg, y_pred_reg, average='micro')
+# print('Accuracy: ', accuracy)
+# print('Precision: ', precision)
 # %%
