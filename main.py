@@ -118,8 +118,9 @@ df.loc[df['añoreg'] == '10', 'añoreg'] = 2010.0
 for column in quantitative_vars:
     df[column] = df[column].astype(float)
 
-'''
+
 # %%
+'''
 for var in quantitative_vars:
     print("\n===== Evaluacion de normalidad de la variable ",
           var, ' ===== \n', df[var])
@@ -295,7 +296,7 @@ eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
 random.seed(255)
-df_tree = df[['deprep', 'gretnp', 'deprem', 'gretnm', 'tohite']].copy()
+df_tree = df[['deprep', 'gretnp', 'deprem', 'gretnm', 'tohite','tohivi']].copy()
 
 # %%
 df_tree2 = df_tree.iloc[0:1000000].copy()
@@ -326,7 +327,6 @@ for i in nonnumeric:
 
 for i in nonnumeric:
     df_tree2[i] = df_tree2[i].astype("category").cat.codes
-
 
 print('FINAL \n', df_tree2.head(20))
 
