@@ -19,6 +19,8 @@ from sklearn.metrics import silhouette_samples
 import matplotlib.cm as cm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import confusion_matrix
+from keras.models import Sequential
+from keras.layers import Dense
 
 
 # %%
@@ -407,3 +409,23 @@ plt.show()
 # print('Accuracy: ', accuracy)
 # print('Precision: ', precision)
 # %%
+
+X_train, X_val_and_test, Y_train, Y_val_and_test = train_test_split(x, y, test_size=0.3)
+X_val, X_test, Y_val, Y_test = train_test_split(X_val_and_test, Y_val_and_test, test_size=0.5)
+
+
+model = Sequential([
+    Dense(32, activation='relu', input_shape=(5,)),
+    Dense(32, activation='relu'),
+    Dense(1, activation='sigmoid'),
+])
+
+model.compile(optimizer='sgd',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+hist = model.fit(X_train, Y_train,
+          batch_size=32, epochs=10,
+          validation_data=(X_val, Y_val))
+
+model.evaluate(X_test, Y_test)[1]
