@@ -12,15 +12,16 @@ from statsmodels.graphics.gofplots import qqplot
 from scipy import stats
 import numpy as np
 import sklearn.cluster as cluster
-import sklearn.preprocessing
+from sklearn import preprocessing
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import silhouette_samples
 import matplotlib.cm as cm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import confusion_matrix
-from keras.models import Sequential
-from keras.layers import Dense
+import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
 
 
 # %%
@@ -298,7 +299,7 @@ eje.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
 # %%
 random.seed(255)
-df_tree = df[['deprep', 'gretnp', 'deprem', 'gretnm', 'tohite','tohivi']].copy()
+df_tree = df[['deprep', 'gretnp', 'deprem', 'gretnm', 'tohivi','tohite']].copy()
 
 # %%
 df_tree2 = df_tree.iloc[0:1000000].copy()
@@ -391,7 +392,7 @@ print("-----------------------------------")
 plt.figure(figsize=(23, 10))
 tree.plot_tree(Dt_model_reg, feature_names=df_tree2.columns,
                fontsize=7, filled=True, rounded=True)
-plt.show()
+# plt.show()
 # %%
 # cm = confusion_matrix(y_test_reg, y_pred_reg)
 # print('Confusion matrix \n', cm)
@@ -409,23 +410,28 @@ plt.show()
 # print('Accuracy: ', accuracy)
 # print('Precision: ', precision)
 # %%
+y = df_tree2.iloc[:,4].values
+x = df_tree2
+LE1 = LabelEncoder()
 
-X_train, X_val_and_test, Y_train, Y_val_and_test = train_test_split(x, y, test_size=0.3)
-X_val, X_test, Y_val, Y_test = train_test_split(X_val_and_test, Y_val_and_test, test_size=0.5)
+x["deprep"] = np.asarray(LE1.fit_transform(x["deprep"])).astype('float32').reshape((-1,1))
+x["gretnp"] = np.asarray(LE1.fit_transform(x["gretnp"])).astype('float32').reshape((-1,1))
+x["deprem"] = np.asarray(LE1.fit_transform(x["deprem"])).astype('float32').reshape((-1,1))
+x["gretnm"] = np.asarray(LE1.fit_transform(x["gretnm"])).astype('float32').reshape((-1,1))
 
+X_train,X_test,Y_train,Y_test = train_test_split(x,y,test_size=0.2,random_state=0)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
 
-model = Sequential([
-    Dense(32, activation='relu', input_shape=(5,)),
-    Dense(32, activation='relu'),
-    Dense(1, activation='sigmoid'),
-])
+ann = tf.keras.models.Sequential()
+ann.add(tf.keras.layers.Dense(units=6, activation="relu"))
+ann.add(tf.keras.layers.Dense(units=6,activation="relu"))
+ann.add(tf.keras.layers.Dense(units=1,activation="sigmoid"))
 
-model.compile(optimizer='sgd',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
+ann.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
 
-hist = model.fit(X_train, Y_train,
-          batch_size=32, epochs=10,
-          validation_data=(X_val, Y_val))
+ann.fit(X_train,Y_train,batch_size=32,epochs = 10)
 
-model.evaluate(X_test, Y_test)[1]
+accuracy = ann.evaluate(X_test, Y_test, verbose=0)[1]
+print('Accuracy: %.2f' % (accuracy*100))
